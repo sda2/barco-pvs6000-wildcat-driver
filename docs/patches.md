@@ -70,7 +70,7 @@ Cave 1 (79 bytes, the free end of section `PAGE`) computes both values and build
 
 ## Control panel `3dlcp.dll` (XP)
 
-The "Advanced" page (dialog 310) has additional controls. Their function and registry values are described in [control-panel.md](control-panel.md). Implementation details:
+The "Advanced" page (dialog 310) has additional controls. Their function and registry values are described in the [README](../README.md#control-panel-windows-xp). Implementation details:
 
 | Location | Change |
 |---|---|

@@ -61,7 +61,7 @@ The units are configured in `0x2C6B8` through PCI configuration register `0xEC` 
 | Vertex processors | `((0xEC >> 27) & 3) × 8` (if `0xEC` = 0: `0x90000000` → 16) | min(maximum, `P10.VertexProcessors`), in groups of 8 | register `0xFF8` bits 4/5 |
 | Texture pipes | `0xEC >> 29` (if `0xEC` = 0: 4) | `P10.TexturePipes` if set; otherwise the flash type 4 value (1) in alternate-clock mode, or the maximum in base-clock mode | register `0xFF8` bits 0–3, plus `P10.TexturePipeMask` |
 
-Pipes are enabled in the order 1, 2, 0, 3, and disabled pipes are skipped. The mask of pipes that are not enabled is written to register `0x1A4`. The driver reports the units that are actually active in the registry value `PVS` (see [registry.md](registry.md)).
+Pipes are enabled in the order 1, 2, 0, 3, and disabled pipes are skipped. The mask of pipes that are not enabled is written to register `0x1A4`. The driver reports the units that are actually active in the registry value `PVS` (see [patches.md](patches.md#hardware-and-clock-report-code-caves-at-0x3bdb1-and-0x179c6)).
 
 ## Outputs
 

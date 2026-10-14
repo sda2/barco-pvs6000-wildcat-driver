@@ -1,0 +1,419 @@
+;
+; Copyright (c) 2001  3Dlabs Inc. Ltd
+;
+; 3DL.inf
+;
+; Installation inf for 3Dlabs Acuity Driver
+;
+
+[Version]
+Signature="$Windows NT$"
+Provider=%TDDD%
+ClassGUID={4D36E968-E325-11CE-BFC1-08002BE10318}
+Class=Display
+CatalogFile.ntx86=3DL-IA32.CAT
+DriverVer=02/16/2006,3.01.0852.8
+
+[DestinationDirs]
+DefaultDestDir		= 11
+miranda.Miniport	= 12  ; drivers
+miranda.Display		= 11  ; system32
+miranda.Applet		= 11  ; system32
+miranda.OGLICD		= 11  ; system32
+miranda.uninst		= 11  ; system32
+miranda.SysTray		= 11  ; system32
+miranda.coinstall	= 11  ; system32
+miranda.LMM			= 11  ;	system32
+miranda.OGL2		= 11, OglBuiltIn ;	system32
+miranda.WinMan		= 11 ;	system32
+;NT4ONLY miranda.INF	= 17  ; INF
+
+[ControlFlags]
+ExcludeFromSelect = %DEV_P10A%&%SSI_VIZYX65_AGP%, \
+					%DEV_P10A%&%SSI_VP760_AGP%, %DEV_P10A%&%SSI_VP870_AGP%, %DEV_P9A%&%SSI_VP560_AGP%, %DEV_P9A%&%SSI_PVS6000_PCI%, %DEV_P10A%&%SSI_VP970_AGP%, \
+					%DEV_P9A%&%SSI_MINI_NOROM%, %DEV_P9A%&%SSI_MINI_BU%, %DEV_P9A%&%SSI_MINI_ENG%, %DEV_P9A%&%SSI_S63_AGP%, \
+					%DEV_P10A%&%SSI_VPMLKDEV_AGP%, %DEV_P10A%&%SSI_VP880PRO_AGP%, %DEV_P10A%&%SSI_VP990PRO_AGP% \
+
+[Manufacturer]
+%TDDD% = 3dlabs.Mfg
+
+[3dlabs.Mfg]
+
+; First come the PnP entries: each of these should be duplicated in an ExcludeFromSelect directive
+;
+%WC_VPDEV%		= miranda, %DEV_P10A%&%SSI_VPDEV_AGP%
+%VIZYX_GAMER%	= miranda, %DEV_P10A%&%SSI_VIZYX65_AGP%
+%WC_VP760%		= miranda, %DEV_P10A%&%SSI_VP760_AGP%
+%WC_VP870%		= miranda, %DEV_P10A%&%SSI_VP870_AGP%
+%WC_VP970%		= miranda, %DEV_P10A%&%SSI_VP970_AGP%
+%WC_MLKDEV%		= miranda, %DEV_P10A%&%SSI_VPMLKDEV_AGP%
+%WC_VP880PRO%	= miranda, %DEV_P10A%&%SSI_VP880PRO_AGP%
+%WC_VP990PRO%	= miranda, %DEV_P10A%&%SSI_VP990PRO_AGP%
+
+%MINI_NOROM%	= miranda, %DEV_P9A%&%SSI_MINI_NOROM%
+%WC_VP560%		= miranda, %DEV_P9A%&%SSI_VP560_AGP%
+%BARCO_PVS6000%	= pvs6000, %DEV_P9A%&%SSI_PVS6000_PCI%
+%MINI_BU%		= miranda, %DEV_P9A%&%SSI_MINI_BU%
+%MINI_ENG%		= miranda, %DEV_P9A%&%SSI_MINI_ENG%
+%S63%			= miranda, %DEV_P9A%&%SSI_S63_AGP%
+
+; Next, the non-PnP (user upgrade) entries 
+;
+%3DLABS_COMPAT% = miranda, %DEV_P10A%, %DEV_P10B%, %DEV_P9A%, %DEV_P9B%
+
+;
+; General installation section
+;
+
+[miranda]
+CopyFiles=miranda.Miniport, miranda.LMM, miranda.Display, miranda.Applet, miranda.OGLICD, miranda.uninst, miranda.SysTray, miranda.OGL2, miranda.WinMan ;NT4ONLY , miranda.INF
+
+[miranda.CoInstallers]
+AddReg          = 3dlcoin.AddReg
+DelFiles        = miranda.coinstall
+CopyFiles       = miranda.coinstall
+
+[3dlcoin.AddReg]
+HKR,,CoInstallers32,0x10000,"3dlcoin.DLL,Co3DlCoinstaller"
+
+;
+; File sections
+;
+
+[miranda.Miniport]
+3dlMP.sys,,,0x00000004
+
+[miranda.Display]
+3dlDD.dll,,,0x00000004
+
+[miranda.Applet]
+3dlCP.dll,,,0x00000004
+
+[miranda.OGLICD]
+3dlICD.dll,,,0x00000004
+glslang.dll,,,0x00000004
+
+[miranda.uninst]
+3dlunin.exe,,,0x00000004
+
+[miranda.LMM]
+MiaSvc.exe,,,0x00000004
+
+[miranda.WinMan]
+3dlwinmn.dll,,,0x00000004
+3dlwmwiz.exe,,,0x00000004
+
+[miranda.SysTray]
+3dlTB.exe,,,0x00000004
+3dlInst.dll,,,0x00000004
+
+[miranda.coinstall]
+3dlcoin.dll
+
+[miranda.OGL2]
+BuiltInFunctions.h
+BuiltInFunctionsFragment.h
+BuiltInFunctionsVertex.h
+StandardFragmentVarying.h
+StandardUniform.h
+StandardVertexAttributes.h
+StandardVertexVarying.h
+
+
+;NT4ONLY [miranda.INF]
+;NT4ONLY 3dlmon.INF
+;NT4ONLY 3dlwrk.INF
+;NT4ONLY 3dldsk.INF
+
+;
+; Service Installation
+;
+
+[miranda.Services]
+AddService = miranda, 0x00000002, miranda_Service_Inst, miranda_EventLog_Inst
+Addservice = miasvc, 0x00000000, LMM_Service_Inst
+
+[miranda_Service_Inst]
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 1                  ; SERVICE_SYSTEM_START
+ErrorControl   = 0                  ; SERVICE_ERROR_IGNORE
+LoadOrderGroup = Video
+ServiceBinary  = %12%\3dlMP.sys
+
+[miranda_EventLog_Inst]
+AddReg = miranda_EventLog_AddReg
+
+[miranda_EventLog_AddReg]
+HKR,,EventMessageFile,0x00020000,"%SystemRoot%\System32\IoLogMsg.dll;%SystemRoot%\System32\drivers\3dlMP.sys"
+HKR,,TypesSupported,0x00010001,7
+
+[LMM_Service_Inst]
+DisplayName    = %LMM_SERVICENAME%
+ServiceType    = 16                 ; SERVICE_WIN32_OWN_PROCESS
+StartType      = 2                  ; SERVICE_AUTO_START
+ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %11%\MiaSvc.exe
+
+;
+; Software Installation
+;
+
+[miranda.SoftwareSettings]
+AddReg = miranda_SoftwareDeviceSettings
+DelReg = miranda_DelReg, miranda_PVS6000_DelReg
+
+[miranda_DelReg]
+HKLM, %MIA_GLOBAL%, Mia.LMMSizeInPages
+
+[miranda.OpenGLSoftwareSettings]
+AddReg = miranda_OpenGLSoftwareSettings, miranda_CPanelSoftwareSettings, miranda_SoftwareGlobalSettings
+
+[miranda_SoftwareDeviceSettings]
+HKR,, InstalledDisplayDrivers,						%REG_MULTI_SZ%, 3dlDD
+HKR,, DefaultSettings.BitsPerPel,					%REG_DWORD%,    0x20
+HKR,, DefaultSettings.XResolution,					%REG_DWORD%,    0x400
+HKR,, DefaultSettings.YResolution,					%REG_DWORD%,    0x300
+HKR,, DefaultSettings.Interlaced,					%REG_DWORD%,    0
+HKR,, DefaultSettings.VRefresh,						%REG_DWORD%,    0x3c
+HKR,, VgaCompatible,								%REG_DWORD%,    0
+HKR,, HardwareInformation.ChipType,					%REG_SZ%,		"unknown"
+HKR,, HardwareInformation.DACType,					%REG_SZ%,		"unknown"
+HKR,, HardwareInformation.AdapterString,			%REG_SZ%,		"unknown"
+HKR,, HardwareInformation.BiosString,				%REG_SZ%,		"unknown"
+HKR,, HardwareInformation.MemorySize,	            %REG_DWORD%,	0
+HKR,, HardwareInformation.CurrentChipClockSpeed,    %REG_DWORD%,	0
+HKR,, HardwareInformation.CurrentMemClockSpeed,     %REG_DWORD%,	0
+HKR,, HardwareInformation.CurrentPixelClockSpeed,	%REG_DWORD%,	0 
+HKR,, ApplicationInfs,								%REG_SZ%,       "3dlmon.INF, 3dlwrk.INF, 3dldsk.INF"
+; W2K/WXP specific stuff - These override some settings above
+; System settings...
+HKR,, MultiFunctionSupported,						%REG_DWORD%,    1
+
+[miranda_SoftwareGlobalSettings]
+HKLM, %MIA_GLOBAL%, 3DExtensions.Disable,			%REG_DWORD%,    0
+HKLM, %MIA_GLOBAL%, 3DExtensions.ExportSwapCopy,	%REG_DWORD%,    0
+HKLM, %MIA_GLOBAL%, 3DExtensions.ForceAlphaOrOverlay,%REG_DWORD%,	0
+HKLM, %MIA_GLOBAL%, 3DExtensions.SupportGDIsingle,	%REG_DWORD%,    1
+HKLM, %MIA_GLOBAL%, 3DExtensions.SupportGDIdouble,	%REG_DWORD%,    1
+HKLM, %MIA_GLOBAL%, CustomID,						%REG_DWORD%,    0
+HKLM, %MIA_GLOBAL%, Direct3DHAL.BypassDownloads,	%REG_DWORD%,	0
+HKLM, %MIA_GLOBAL%, Direct3DHAL.Disable,			%REG_DWORD%,    0
+HKLM, %MIA_GLOBAL%, Direct3DHAL.DisableAGPHeap,		%REG_DWORD%,    0
+HKLM, %MIA_GLOBAL%, Direct3DHAL.DriverLclIBSizeKB,		%REG_DWORD%,    10000
+HKLM, %MIA_GLOBAL%, Direct3DHAL.DriverLclVBSizeKB,		%REG_DWORD%,    40000
+HKLM, %MIA_GLOBAL%, Direct3DHAL.DriverNonLclIBs,			%REG_DWORD%,    1
+HKLM, %MIA_GLOBAL%, Direct3DHAL.DriverNonLclIBSizeKB,		%REG_DWORD%,    25000
+HKLM, %MIA_GLOBAL%, Direct3DHAL.DriverNonLclVBs,			%REG_DWORD%,    1
+HKLM, %MIA_GLOBAL%, Direct3DHAL.DriverNonLclVBSizeKB,		%REG_DWORD%,    70000
+HKLM, %MIA_GLOBAL%, Direct3DHAL.EnableSysMemHintDynIBs,		%REG_DWORD%,    1
+HKLM, %MIA_GLOBAL%, Direct3DHAL.ShadowSysMemEBs,	%REG_DWORD%,    1
+HKLM, %MIA_GLOBAL%, DoubleBuffer.DisablePageFlip,	%REG_DWORD%,    0
+HKLM, %MIA_GLOBAL%, DoubleBuffer.NumberOfBuffers,	%REG_DWORD%,    2
+HKLM, %MIA_GLOBAL%, DualView.Mode,					%REG_DWORD%,    1
+HKLM, %MIA_GLOBAL%, Mia.DMAUseGPIO,					%REG_DWORD%,    1
+HKLM, %MIA_GLOBAL%, Mia.DMAUseHostContext,			%REG_DWORD%,    0
+HKLM, %MIA_GLOBAL%, Mia.DMAScheme,					%REG_DWORD%,    1
+HKLM, %MIA_GLOBAL%, Mia.EnableIsoContext,			%REG_DWORD%,    0
+HKLM, %MIA_GLOBAL%, Mia.LMMEnable,					%REG_DWORD%,    1
+HKLM, %MIA_GLOBAL%, Mia.LMMHostTables,				%REG_DWORD%,    0
+HKLM, %MIA_GLOBAL%, Mia.LMMRestoreRetries,				%REG_DWORD%,    5
+HKLM, %MIA_GLOBAL%, Mia.Installing,				%REG_DWORD%,    1
+HKLM, %MIA_GLOBAL%, MonitorTiming.AllowStrides,		%REG_DWORD%,    1
+HKLM, %MIA_GLOBAL%, MonitorTiming.Type,				%REG_DWORD%,    1
+HKLM, %MIA_GLOBAL%, OpenGL.AAMultiBufferCount,		%REG_DWORD%,	1
+HKLM, %MIA_GLOBAL%, OpenGL.AAMultiBufferFilter,		%REG_DWORD%,	0
+HKLM, %MIA_GLOBAL%, OpenGL.DlistOnHost,				%REG_DWORD%,	0
+HKLM, %MIA_GLOBAL%, OpenGL.DMAUseIMP,				%REG_DWORD%,	0
+HKLM, %MIA_GLOBAL%, OpenGL.DMAEnableEvents,			%REG_DWORD%,	1
+HKLM, %MIA_GLOBAL%, OpenGL.EnableAnisotropicFiltering,		%REG_DWORD%,	0
+HKLM, %MIA_GLOBAL%, OpenGL.ForceTextureDepth,		%REG_DWORD%,	0
+HKLM, %MIA_GLOBAL%, OpenGL.P10LBWidth,				%REG_DWORD%,	0x20
+HKLM, %MIA_GLOBAL%, OpenGL.SupportSoftimage351,		%REG_DWORD%,	0
+HKLM, %MIA_GLOBAL%, OpenGL.SupportUnigraphics,		%REG_DWORD%,	0
+HKLM, %MIA_GLOBAL%, OpenGL.UseHighQualityLOD,		%REG_DWORD%,	0
+HKLM, %MIA_GLOBAL%, OpenGL.WaitForVBlank,			%REG_DWORD%,    0
+HKLM, %MIA_GLOBAL%, OpenGL.ZBufferDepth,			%REG_DWORD%,    0
+HKLM, %MIA_GLOBAL%, P10.WantStride,					%REG_DWORD%,    1
+HKLM, %MIA_GLOBAL%, Direct3D.OptimizedApplication,	%REG_SZ%,		"DirectX(tm) Default"
+HKLM, %MIA_GLOBAL%, OpenGL.OptimizedApplication,	%REG_SZ%,		"OpenGL(tm) Default"
+
+;P9 only settings
+HKLM, %MIA_GLOBAL%, P9.BinSizeKB,					%REG_DWORD%,    8000
+HKLM, %MIA_GLOBAL%, P9.OverlapSizeKB,				%REG_DWORD%,    1000
+HKLM, %MIA_GLOBAL%, Direct3DHAL.P9BinMode,		%REG_DWORD%,    0
+HKLM, %MIA_GLOBAL%, Direct3DHAL.P9OverlapMode,	%REG_DWORD%,    0
+HKLM, %MIA_GLOBAL%, OpenGL.BinMode,					%REG_DWORD%,    0
+
+
+
+[miranda_OpenGLSoftwareSettings]                                                                                            
+;NT4ONLY HKR,, 3DLabs Miranda driver,     %REG_SZ%, 3dlICD.dll
+;Win2K, XPonly:
+HKLM, SOFTWARE\Microsoft\Windows NT\CurrentVersion\OpenGLDrivers\3DLabs Miranda driver, DLL,	%REG_SZ%, 3dlICD.dll
+HKLM, SOFTWARE\Microsoft\Windows NT\CurrentVersion\OpenGLDrivers\3DLabs Miranda driver, Flags,	%REG_DWORD%, 0x3
+HKLM, SOFTWARE\Microsoft\Windows NT\CurrentVersion\OpenGLDrivers\3DLabs Miranda driver, Version,%REG_DWORD%, 0x2
+HKLM, SOFTWARE\Microsoft\Windows NT\CurrentVersion\OpenGLDrivers\3DLabs Miranda driver, DriverVersion, %REG_DWORD%, 0xcc
+
+[miranda_CPanelSoftwareSettings]                                                                                            
+HKLM,SoftWare\Classes\CLSID\{6F8CC873-D8F2-4086-9288-F7F03ECF55BF}, ,,"3Dlabs CPL Extension V3"
+HKLM,SoftWare\Classes\CLSID\{6F8CC873-D8F2-4086-9288-F7F03ECF55BF}\InProcServer32, ,,"3dlCP.dll"
+HKLM,SoftWare\Classes\CLSID\{6F8CC873-D8F2-4086-9288-F7F03ECF55BF}\InProcServer32,"ThreadingModel",,"Apartment"
+HKLM,SoftWare\Microsoft\Windows\CurrentVersion\Controls Folder\Display\shellex\PropertySheetHandlers\3Dlabs CPL Extension V3,,,"{6F8CC873-D8F2-4086-9288-F7F03ECF55BF}"
+HKLM,SoftWare\Microsoft\Windows\CurrentVersion\Run,"3Dlabs Taskbar Display Manager", , "%11%\3dlTB.exe"
+HKLM,SoftWare\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved,"{6F8CC873-D8F2-4086-9288-F7F03ECF55BF}", , "3Dlabs CPL Extension V3"
+; uninstall entry 
+HKLM,SoftWare\Microsoft\Windows\CurrentVersion\Uninstall\3Dlabs Acuity Driver,"DisplayName", , "3Dlabs Acuity Display Driver"
+HKLM,SoftWare\Microsoft\Windows\CurrentVersion\Uninstall\3Dlabs Acuity Driver,"UninstallString", , "%11%\3dlunin.exe /ZapNT"
+; NOTE - if driven by the new installShield Installer the "UninstallString" is overwritten by %11%\3dlunin.bat 
+;		 and the "DisplayName" by 3Dlabs Acuity Driver" 
+; Tweak for mem management settings
+;HKLM,SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management, SystemPages, %REG_DWORD%, 98304
+
+[miranda.GeneralConfigData]
+MaximumNumberOfDevices = 8
+
+;
+; Barco PVS6000 (PCI board with the P9 of the Wildcat VP560): same installation as "miranda",
+; plus the AGP functions of the miniport and the Direct3D AGP heap switched off.
+; Only the PVS6000 hardware ID uses these sections; AGP boards keep the original settings.
+;
+
+[pvs6000]
+CopyFiles=miranda.Miniport, miranda.LMM, miranda.Display, miranda.Applet, miranda.OGLICD, miranda.uninst, miranda.SysTray, miranda.OGL2, miranda.WinMan
+
+[pvs6000.CoInstallers]
+AddReg          = 3dlcoin.AddReg
+DelFiles        = miranda.coinstall
+CopyFiles       = miranda.coinstall
+
+[pvs6000.Services]
+AddService = miranda, 0x00000002, miranda_Service_Inst, miranda_EventLog_Inst
+Addservice = miasvc, 0x00000000, LMM_Service_Inst
+
+[pvs6000.SoftwareSettings]
+AddReg = miranda_SoftwareDeviceSettings, pvs6000_SoftwareDeviceSettings
+DelReg = miranda_DelReg
+
+[pvs6000.OpenGLSoftwareSettings]
+AddReg = miranda_OpenGLSoftwareSettings, miranda_CPanelSoftwareSettings, miranda_SoftwareGlobalSettings, pvs6000_SoftwareGlobalSettings
+
+[pvs6000.GeneralConfigData]
+MaximumNumberOfDevices = 8
+
+[pvs6000_SoftwareDeviceSettings]
+HKR,, GlintDMA.UseAGP,								%REG_DWORD%,    0
+HKR,, GlintDMA.SBADisable,							%REG_DWORD%,    1
+HKR,, GlintDMA.FWDisable,							%REG_DWORD%,    1
+HKR,, GlintDMA.AGPWriteDisable,						%REG_DWORD%,    1
+
+[pvs6000_SoftwareGlobalSettings]
+HKLM, %MIA_GLOBAL%, Direct3DHAL.DisableAGPHeap,		%REG_DWORD%,    1
+HKLM, %MIA_GLOBAL%, GlintDMA.UseAGP,			%REG_DWORD%,    0
+HKLM, %MIA_GLOBAL%, GlintDMA.SBADisable,		%REG_DWORD%,    1
+HKLM, %MIA_GLOBAL%, GlintDMA.FWDisable,			%REG_DWORD%,    1
+HKLM, %MIA_GLOBAL%, GlintDMA.AGPWriteDisable,		%REG_DWORD%,    1
+
+; AGP boards (installed through "miranda"): remove PVS6000 AGP overrides left in Global
+[miranda_PVS6000_DelReg]
+HKLM, %MIA_GLOBAL%, GlintDMA.UseAGP
+HKLM, %MIA_GLOBAL%, GlintDMA.SBADisable
+HKLM, %MIA_GLOBAL%, GlintDMA.FWDisable
+HKLM, %MIA_GLOBAL%, GlintDMA.AGPWriteDisable
+
+;
+; Source file information
+;
+
+[SourceDisksNames]
+1 = %DiskId1%,,,x86
+2 = %DiskId2%,,,""
+
+[SourceDisksFiles]
+3dlDD.dll  = 1, Win2K
+3dlMP.sys  = 1, Win2K
+3dlInst.dll = 1, Common
+3dlcoin.dll = 1, Win2K
+3dlCP.dll   = 1, Common
+3dlICD.dll = 1, Common
+3dlunin.exe = 1, Common
+3dlWinMn.dll = 1, Common
+3dlWMWiz.exe = 1, Common
+3dlTB.exe = 1, Common
+MiaSvc.exe = 1,Common
+glslang.dll			= 1, Common
+BuiltInFunctions.h		= 1, Common\OglBuiltIn
+BuiltInFunctionsFragment.h	= 1, Common\OglBuiltIn
+BuiltInFunctionsVertex.h	= 1, Common\OglBuiltIn
+StandardFragmentVarying.h	= 1, Common\OglBuiltIn
+StandardUniform.h		= 1, Common\OglBuiltIn
+StandardVertexAttributes.h	= 1, Common\OglBuiltIn
+StandardVertexVarying.h		= 1, Common\OglBuiltIn
+;NT4ONLY 3dlmon.INF = 1, Common
+;NT4ONLY 3dlwrk.INF = 1, Common
+;NT4ONLY 3dldsk.INF = 1, Common
+
+[Strings]
+
+;
+; Non-Localizable Strings
+;
+
+REG_SZ          = 0x00000000
+REG_MULTI_SZ    = 0x00010000
+REG_EXPAND_SZ   = 0x00020000
+REG_BINARY      = 0x00000001
+REG_DWORD       = 0x00010001
+
+; PCI processor IDs
+DEV_P10A		= "PCI\VEN_3D3D&DEV_0020"
+DEV_P10B		= "PCI\VEN_3D3D&DEV_0022"
+DEV_P9A			= "PCI\VEN_3D3D&DEV_0024"
+DEV_P9B			= "PCI\VEN_3D3D&DEV_0026"
+
+; PCI adapter subsys IDs
+SSI_VPDEV_AGP		= "SUBSYS_01553D3D"
+SSI_VP760_AGP		= "SUBSYS_01563D3D"
+SSI_VP870_AGP		= "SUBSYS_01573D3D"
+SSI_VIZYX65_AGP		= "SUBSYS_01583D3D"
+SSI_VP970_AGP		= "SUBSYS_01603D3D"
+SSI_VPMLKDEV_AGP	= "SUBSYS_01653D3D"
+SSI_VP880PRO_AGP	= "SUBSYS_01673D3D"
+SSI_VP990PRO_AGP	= "SUBSYS_01683D3D"
+SSI_MINI_NOROM		= "SUBSYS_00243D3D"
+SSI_MINI_BU			= "SUBSYS_01613D3D"
+SSI_MINI_ENG		= "SUBSYS_01623D3D"
+SSI_VP560_AGP		= "SUBSYS_01633D3D"
+SSI_S63_AGP			= "SUBSYS_10661102"
+SSI_PVS6000_PCI		= "SUBSYS_004011A4"
+
+;
+; Localizable Strings
+;
+
+TDDD="3Dlabs Inc. Ltd."
+DiskId1="Windows NT Driver Library installation disk 1"
+DiskId2="Windows NT Driver Library installation disk 2"
+LMM_SERVICENAME="3Dlabs LMM"
+
+; Product Names
+;
+WC_VPDEV		= "3Dlabs Wildcat VP Development Adapter"
+WC_VP760		= "3Dlabs Wildcat VP760"
+WC_VP870		= "3Dlabs Wildcat VP870"
+WC_VP970		= "3Dlabs Wildcat VP970"
+WC_MLKDEV		= "3Dlabs Wildcat MLK Development Adapter"
+WC_VP880PRO		= "3Dlabs Wildcat VP880 Pro"
+WC_VP990PRO		= "3Dlabs Wildcat VP990 Pro"
+VIZYX_GAMER		= "3Dlabs Vizyx T65"
+MINI_NOROM		= "3Dlabs MiniMiranda ROMless Developent Adapter"
+MINI_BU			= "3Dlabs MiniMiranda BU Developent Adapter"
+MINI_ENG		= "3Dlabs MiniMiranda ENG Developent Adapter"
+WC_VP560		= "3Dlabs Wildcat VP560"
+BARCO_PVS6000	= "Barco PVS6000 (3Dlabs Wildcat VP560 compatible)"
+S63				= "Graphics Blaster Picture Perfect"
+
+3DLABS_COMPAT	= "3Dlabs Compatible Driver"
+
+; General constants
+;
+MIA_GLOBAL		= "SYSTEM\CurrentControlSet\Services\miranda\Global"

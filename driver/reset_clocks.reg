@@ -1,0 +1,16 @@
+Windows Registry Editor Version 5.00
+
+; Barco PVS6000 - reset core and memory clocks to the values stored in the card's flash
+; (core 270 MHz alternate / 260 MHz base clock, memory 450 MHz).
+; Use this if the card no longer initialises after a clock change in the control panel:
+; boot into Safe Mode (F8), import this file, restart normally.
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\miranda\Global]
+"P10.CoreClockSpeed"=-
+"P10.AltCoreClockSpeed"=-
+"P10.MemoryClockSpeed"=-
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\miranda\Device0]
+"P10.CoreClockSpeed"=-
+"P10.AltCoreClockSpeed"=-
+"P10.MemoryClockSpeed"=-

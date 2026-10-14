@@ -1,0 +1,127 @@
+;
+; Copyright (c) 2001  3Dlabs Inc. Ltd
+;
+; 3DLdl.inf
+;
+; Installation inf for 3Dlabs Acuity Driver for the secondary head
+;
+
+[Version]
+Signature="$Windows NT$"
+Provider=%TDDD%
+ClassGUID={4D36E968-E325-11CE-BFC1-08002BE10318}
+Class=Display
+CatalogFile.ntx86=3DL-IA32.CAT
+DriverVer=02/16/2006,3.01.0852.8
+
+[DestinationDirs]
+DefaultDestDir		= 11
+miranda.Miniport	= 12  ; drivers
+miranda.Display		= 11  ; system32
+
+[Manufacturer]
+%TDDD% = 3dlabs.Mfg
+
+[3dlabs.Mfg]
+3Dlabs Windows 2000 DualView Driver = miranda, *PNP3D3D
+
+;
+; General installation section
+;
+
+[miranda]
+CopyFiles=miranda.Miniport, miranda.Display
+
+;
+; File sections
+;
+
+[miranda.Miniport]
+3dlMP.sys
+
+[miranda.Display]
+3dlDD.dll
+
+;
+; Service Installation
+;
+
+[miranda.Services]
+AddService = miranda, 0x00000002, miranda_Service_Inst, miranda_EventLog_Inst
+
+[miranda_Service_Inst]
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 1                  ; SERVICE_SYSTEM_START
+ErrorControl   = 0                  ; SERVICE_ERROR_IGNORE
+LoadOrderGroup = Video
+ServiceBinary  = %12%\3dlMP.sys
+
+[miranda_EventLog_Inst]
+AddReg = miranda_EventLog_AddReg
+
+[miranda_EventLog_AddReg]
+HKR,,EventMessageFile,0x00020000,"%SystemRoot%\System32\IoLogMsg.dll;%SystemRoot%\System32\drivers\3dlMP.sys"
+HKR,,TypesSupported,0x00010001,7
+
+;
+; Software Installation
+;
+
+[miranda.SoftwareSettings]
+AddReg = miranda_SoftwareDeviceSettings
+DelReg = miranda_DelReg
+
+[miranda_DelReg]
+
+[miranda_SoftwareDeviceSettings]
+
+HKR,, InstalledDisplayDrivers,			%REG_MULTI_SZ%, 3dlDD
+HKR,, VgaCompatible,					%REG_DWORD%,    0
+HKR,, VideoDebugLevel,					%REG_DWORD%,    0
+HKR,, MultiFunctionSupported,			%REG_DWORD%,    1
+HKR,, DefaultSettings.BitsPerPel,		%REG_DWORD%,    0x20
+HKR,, DefaultSettings.XResolution,		%REG_DWORD%,    0x400
+HKR,, DefaultSettings.YResolution,		%REG_DWORD%,    0x300
+HKR,, DefaultSettings.Interlaced,		%REG_DWORD%,    0
+HKR,, DefaultSettings.VRefresh,			%REG_DWORD%,    0x3c
+
+HKLM,SYSTEM\CurrentControlSet\Services\miranda\Global, DualView.Mode,	%REG_DWORD%,	1
+HKLM,SYSTEM\CurrentControlSet\Services\miranda\Global, Mia.Installing,	%REG_DWORD%,    1
+
+; uninstall entry 
+HKLM,SoftWare\Microsoft\Windows\CurrentVersion\Uninstall\3Dlabs Acuity Driver,"DisplayName", , "3Dlabs Acuity Display Driver"
+HKLM,SoftWare\Microsoft\Windows\CurrentVersion\Uninstall\3Dlabs Acuity Driver,"UninstallString", , "%11%\3dlunin.exe /Zap2K-1"
+; NOTE - if driven by the new installShield Installer the "UninstallString" is overwritten by %11%\3dlunin.bat 
+;		 and the "DisplayName" by 3Dlabs Acuity Driver" 
+
+;
+; Source file information
+;
+
+[SourceDisksNames]
+1 = %DiskId1%,,,x86
+2 = %DiskId2%,,,""
+
+[SourceDisksFiles]
+3dlDD.dll  = 1, \Win2K
+3dlMP.sys  = 1, \Win2K
+
+[Strings]
+
+;
+; Non-Localizable Strings
+;
+
+REG_SZ          = 0x00000000
+REG_MULTI_SZ    = 0x00010000
+REG_EXPAND_SZ   = 0x00020000
+REG_BINARY      = 0x00000001
+REG_DWORD       = 0x00010001
+
+;
+; Localizable Strings
+;
+
+TDDD="3Dlabs Inc. Ltd."
+DiskId1="Windows NT Driver Library installation disk 1"
+DiskId2="Windows NT Driver Library installation disk 2"
